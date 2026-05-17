@@ -161,15 +161,6 @@ html, body {
   line-height: 1;
 }
 @media (min-width: 600px) { .ch-num { font-size: 15px; } }
-.ch-zh {
-  font-family: 'Klee One', cursive;
-  font-size: clamp(8px, 2vw, 10px);
-  color: rgba(255,255,180,.65);
-  line-height: 1.1; text-align: center;
-  max-width: 100%; overflow: hidden;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-}
-@media (min-width: 600px) { .ch-zh { font-size: 9px; } }
 
 /* ══ CARD SCREEN ══ */
 #screen-ddj-card {
@@ -227,11 +218,7 @@ html, body {
 }
 .card-sep { width: 100%; height: 1px; background: rgba(255,255,255,0.15); }
 
-/* portal footer */
-.portal-footer { margin-top: 48px; width: 100%; max-width: 520px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
-.footer-credit { font-size: 11px; color: rgba(255,255,255,.25); font-style: italic; line-height: 1.8; }
-.footer-credit strong { color: rgba(0,191,255,.5); font-style: normal; font-weight: 400; }
-.footer-copy { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: .1em; color: rgba(255,255,255,.2); margin-top: 4px; }
+/* footer rendered by SPGo.renderFooter() from ddj-card.js */
 
 /* loading helpers */
 @keyframes verifyPulse {
@@ -319,12 +306,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
     </div>
 
     <div class="chapter-grid" id="chapterGrid">
-      <!-- Built by JS -->
-    </div>
-
-    <div class="portal-footer">
-      <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
-      <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
+      <!-- Built by JS — SPGo.renderFooter() appends footer after grid -->
     </div>
   </div>
 </div>
@@ -339,10 +321,9 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
       <button class="card-back-btn" onclick="ddjBack()"> Back</button>
     </div>
     <div class="card-scroll">
-      <!-- DDJCard.render() writes into this div -->
       <div id="ddj-export-card"></div>
 
-      <div class="card-actions" style="margin-top:20px;">
+      <div class="card-actions" style="margin-top:36px;">
         <div class="card-action-col">
           <button class="card-action-btn" onclick="ddjDownload()">Copy Result 📷</button>
           <span id="ddj-img-confirm" class="action-confirm">Downloaded!</span>
@@ -353,10 +334,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
         </div>
       </div>
 
-      <div class="portal-footer" style="width:100%;max-width:520px;text-align:center;">
-        <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
-        <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
-      </div>
+      <div id="ddj-card-footer-wrap" style="width:100%;max-width:520px;"></div>
     </div>
   </div>
 </div>
@@ -369,28 +347,6 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
 // ================================================================
 // 道德經 Directory · DDJ-DIR
 // ================================================================
-
-// Chapter short titles for grid buttons (Chinese only — keeps buttons compact)
-// These are the canonical opening-word titles for each chapter
-const DDJ_TITLES = [
-  '道可道','天下皆知','不尚賢','道沖','天地不仁',
-  '谷神不死','天長地久','上善若水','持而盈之','三十輻',
-  '為學日益','為道日損','知人者智','為學日益','致虛極',
-  '太上','大道廢','絕聖棄智','絕學無憂','孔德之容',
-  '曲則全','希言自然','企者不立','有物混成','重為輕根',
-  '知常容','善行無轍','知其雄','為天下谿','為學日益',
-  '知人者智','大道氾兮','知人者智','大道隱','上德不德',
-  '昔之得一','反者道之動','道生一','上士聞道','道生之',
-  '天下之至柔','知足者富','為道日損','含德之厚','知和曰常',
-  '為學日益','善為士者','知足者富','為學日益','天下皆知',
-  '修之於身','知人者智','道常無名','知人者智','善用人者',
-  '大道氾兮','知人者智','上德不德','聖人常善','為道日損',
-  '知足者富','天下難事','其安易持','古之善為道','知常容',
-  '太上','信言不美','天下皆知','聖人不積','天之道',
-  '玄德','知常容','知人者智','大道氾兮','天下皆知',
-  '道可道','天下皆知','不尚賢','道沖','天地不仁',
-  '谷神不死'
-];
 
 let currentChapter = null;
 let currentData    = null;
@@ -490,13 +446,12 @@ function buildGrid() {
     const btn = document.createElement('div');
     btn.className = 'ch-btn';
     btn.id = 'ch-btn-' + i;
-    btn.innerHTML = `
-      <span class="ch-num">${i}</span>
-      <span class="ch-zh">${DDJ_TITLES[i-1] || ''}</span>
-    `;
+    btn.innerHTML = `<span class="ch-num">${i}</span>`;
     btn.addEventListener('click', () => openChapter(i, btn));
     grid.appendChild(btn);
   }
+  // footer rendered by shared module — appears after grid, centered
+  SPGo.renderFooter('screen-ddj-grid');
 }
 
 // ── Open chapter ───────────────────────────────────────────────────
@@ -516,6 +471,7 @@ async function openChapter(n, btn) {
       source: 'DDJ Directory'
     });
     btn.classList.remove('loading');
+    SPGo.renderFooter('ddj-card-footer-wrap');
     goTo('screen-ddj-card');
     document.getElementById('screen-ddj-card').scrollTop = 0;
   } catch(e) {
