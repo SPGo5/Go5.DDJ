@@ -286,7 +286,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
 <!-- ══════════════════════════════════════
      VERIFYING SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-ddj-verify" class="screen">
+<div id="screen-ddj-verify" class="screen" style="display:none;">
   <div style="font-size:36px;" class="sp-loading-img">道</div>
   <div class="sp-loading">Verifying…</div>
 </div>
@@ -295,7 +295,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
 <!-- ══════════════════════════════════════
      SPLASH SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-ddj-splash" class="screen" onclick="ddjEnter()">
+<div id="screen-ddj-splash" class="screen" style="display:none;" onclick="ddjEnter()">
   <div style="font-family:'Klee One',cursive;font-size:48px;color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);margin-bottom:14px;">道德經</div>
   <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--sky);letter-spacing:.2em;margin-bottom:6px;">Tao Te Ching</div>
   <div style="font-family:'Cinzel',serif;font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.18em;margin-bottom:8px;">Chapter Directory</div>
@@ -310,7 +310,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
 <!-- ══════════════════════════════════════
      GRID SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-ddj-grid" class="screen">
+<div id="screen-ddj-grid" class="screen" style="display:none;">
   <div class="grid-page">
     <div class="grid-header">
       <div class="grid-header-zh">道德經</div>
@@ -333,7 +333,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
 <!-- ══════════════════════════════════════
      CARD SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-ddj-card" class="screen">
+<div id="screen-ddj-card" class="screen" style="display:none;">
   <div class="card-page">
     <div class="card-topbar">
       <button class="card-back-btn" onclick="ddjBack()"> Back</button>
@@ -342,9 +342,7 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
       <!-- DDJCard.render() writes into this div -->
       <div id="ddj-export-card"></div>
 
-      <div class="card-sep" style="margin:16px 0;"></div>
-
-      <div class="card-actions">
+      <div class="card-actions" style="margin-top:20px;">
         <div class="card-action-col">
           <button class="card-action-btn" onclick="ddjDownload()">Copy Result 📷</button>
           <span id="ddj-img-confirm" class="action-confirm">Downloaded!</span>
@@ -355,12 +353,10 @@ button:active, [onclick]:active { opacity:.75!important; transform:scale(0.96)!i
         </div>
       </div>
 
-      <div class="card-sep" style="margin:12px 0 16px;"></div>
-    </div>
-
-    <div class="portal-footer" style="padding:16px 20px;">
-      <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
-      <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
+      <div class="portal-footer" style="width:100%;max-width:520px;text-align:center;">
+        <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
+        <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
+      </div>
     </div>
   </div>
 </div>
@@ -431,7 +427,8 @@ document.addEventListener('touchend', e => {
 
 // ── SPGo overrides ─────────────────────────────────────────────────
 function setHomeState() {
-  goTo('screen-ddj-splash');
+  buildGrid();
+  goTo('screen-ddj-grid');
   updateProfileCorner();
   gasJsonp('action=ping&stat=visits_ddj', function(data) {
     const el = document.getElementById('ddj-visit-count');
